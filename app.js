@@ -4,7 +4,7 @@ const ejs = require('ejs');
 const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
-const Campgorund = require('./models/campground')
+const Campgorund = require('./models/campground');
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -27,4 +27,14 @@ app.get('/', (req, res) => {
     res.render('home')
 });
 
+app.get('/campgrounds', async (req, res) => {
+    const campgrounds = await Campgorund.find({})
+    res.render('campgrounds/index', { campgrounds });
+});
+
+app.get('/campgrounds/:id', async (req, res) => {
+    const campground = await Campgorund.findById(req.params.id);
+    res.render('campgrounds/show', {campground});
+})
+  
 app.listen(port);
