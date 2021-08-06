@@ -3,6 +3,7 @@ const path = require('path');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const ejsMate  = require('ejs-mate');
+const catchAsync = require('./utils/catchAsync');
 const port = 3000;
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
@@ -44,11 +45,11 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new');
 });
 
-app.post('/campgrounds', async (req, res) => {
+app.post('/campgrounds', catchAsync(async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.render(`campgrounds/show`, { campground } );
-});
+}));
 
 app.get('/campgrounds/:id/edit', async (req, res) => {
     const { id } = req.params;
@@ -72,5 +73,9 @@ app.delete('/campgrounds/:id', async (req, res) => {
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 })
+
+app.use((err, req, res, next) => {
+    res.send('Oh boy, something went wrong');
+});
   
 app.listen(port);
