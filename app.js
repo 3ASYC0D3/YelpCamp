@@ -3,12 +3,14 @@ const path = require('path');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const ejsMate  = require('ejs-mate');
-const { campgroundSchema } = require('./schemas');
+const { campgroundSchema, reviewSchema } = require('./schemas');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError')
 const port = 3000;
-const Campground = require('./models/campground');
 const methodOverride = require('method-override');
+const Campground = require('./models/campground');
+const Review = require('./models/review');
+
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -41,6 +43,14 @@ const validateCampground = (req, res, next) => {
         next();
 }};
 
+const validateReview = (req, res, next) => {
+    const result = reviewSchema.validate(req.body);
+    if (result.error) {
+        throw new ExpressError(result.error.message, 400);
+    } else {
+        next();
+}};
+
 app.get('/', (req, res) => {
     res.render('home')
 });
@@ -58,7 +68,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res) => {
     // if (!req.body.campground) throw new ExpressError('Invalid campground data', 400); 
     const campground = new Campground(req.body.campground);
     await campground.save();
-    res.render(`campgrounds/show`, { campground } );
+    res.render('campgrounds/show', { campground } );
 }));
 
 app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
@@ -84,6 +94,16 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds');
 }));
 
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = await new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground.id}`);
+
+}));
+
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))
 });
@@ -94,4 +114,4 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 });
   
-app.listen(port);  
+app.listen(port);
