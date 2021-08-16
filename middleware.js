@@ -29,8 +29,6 @@ module.exports.isAuthor = async (req, res, next) => {
     next();
 };
 
-// Reviews middleware below 
-
 module.exports.validateReview = (req, res, next) => {
     const result = reviewSchema.validate(req.body);
     if (result.error) {
