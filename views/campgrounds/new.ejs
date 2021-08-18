@@ -23,19 +23,6 @@
                     Please enter campground location.
                 </div>
             </div>
-            <div class="mb-3">
-                <input type="file" name="image" id="image" multiple>
-            </div>
-            <!-- <div class="mb-3">
-                <label class="form-label" for="image">Image Url</label>
-                <input class="form-control" type="text" id="image" name="campground[image]" required>
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
-                <div class="invalid-feedback">
-                    Please enter campground image Url.
-                </div>
-            </div> -->
             <label class="form-label" for="price">Campground Price</label>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="price-label">$</span>
@@ -47,7 +34,7 @@
                     Please enter price $ per night.
                 </div>
             </div>
-            <div>
+            <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
                 <textarea class="form-control" type="text" id="description" name="campground[description]" required></textarea>
                 <div class="valid-feedback">
@@ -56,6 +43,10 @@
                 <div class="invalid-feedback">
                     Please enter campground description.
                 </div>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Images</label>
+                <input class="form-control" type="file" name="image" id="image" multiple>
             </div>
             <button class="btn btn-success" type="submit">Add Campground</button>
         </form>
