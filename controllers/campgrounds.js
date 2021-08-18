@@ -32,7 +32,9 @@ module.exports.showCampground = async (req, res) => {
 
 module.exports.editCampground = async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground})
+    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});
+    campground.images = campground.images.concat(req.files.map(f => ({ url: f.path, filename: f.filename})));
+    await campground.save();
     req.flash('success', 'Successfully updated campground!');
     res.redirect(`/campgrounds/${campground.id}`);    
 };
