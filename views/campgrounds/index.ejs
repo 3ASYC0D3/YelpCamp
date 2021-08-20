@@ -5,7 +5,11 @@
     <div class="card">
         <div class="row">
             <div class="col-md-4">
+                <% if(campground.images.length) { %> 
                 <img src="<%= campground.images[Math.floor(Math.random()*campground.images.length)].url %>" alt="" class="img-fluid">
+                <% } else { %>
+                <img class="img-fluid p-5" src="https://res.cloudinary.com/darioyelpcamp/image/upload/v1629447270/YelpCamp/tent_kliky1.png" height="220px"alt="">    
+                <% } %> 
             </div>
             <div class="col-md-8">
                 <div class="card-body">
