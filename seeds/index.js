@@ -1,9 +1,15 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+};
 
 const mongoose = require('mongoose');
 const cities = require('./cities');
 const { descriptors, places } = require('./seedHelpers');
 const Campground = require('../models/campground');
-
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mbxStyles = require('@mapbox/mapbox-sdk/services/styles');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -17,17 +23,22 @@ db.once('open', () => {
     console.log('Database connected');
 });
 
-
 const seedDB = async () => {
     await Campground.deleteMany({});
-    const random1000 = Math.floor(Math.random()*1000);
     for (let i = 0; i < 50; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const price = Math.floor(Math.random()*40) + 10;
         const sample = array => array[Math.floor(Math.random() * array.length)];
+        const location = `${cities[random1000].city}, ${cities[random1000].state}`;
+        const geoData = await geocoder.forwardGeocode({
+            query: location,
+            limit: 1
+        }).send();
+        const geometry = geoData.body.features[0].geometry;
         const camp = new Campground({
             author: '61168c48446bd001e024ab68',
-            location: `${cities[random1000].city}, ${cities[random1000].state}`,
+            location: location,
+            geometry: geometry,
             title: `${sample(descriptors)} ${sample(places)}`, 
             description: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi.',
             price,
