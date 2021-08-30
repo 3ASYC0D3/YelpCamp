@@ -13,7 +13,7 @@ const marker1 = new mapboxgl.Marker({color: 'orange'})
     .setPopup(
         new mapboxgl.Popup({ offset: 30 })
         .setHTML(
-            `<h4>${campground.title}</h4><p>${}</p>`
+            `<h4>${campground.title}</h4><p>$${campground.price}</p>`
         )
     )
     .addTo(map);
