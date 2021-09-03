@@ -10,8 +10,13 @@ const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mbxStyles = require('@mapbox/mapbox-sdk/services/styles');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+const dbUrl = process.env.DB_URL;
+// const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+const User = require('../models/user');
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+// 'mongodb://localhost:27017/yelp-camp' <-- local db 
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
@@ -25,7 +30,12 @@ db.once('open', () => {
 
 const seedDB = async () => {
     await Campground.deleteMany({});
-    for (let i = 0; i < 300; i++) {
+    const allUsers = await User.find();
+    const authorsIds = [];
+    for (let user of allUsers) {
+        authorsIds.push(user.id);
+    };
+    for (let i = 0; i < 50; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const price = Math.floor(Math.random()*40) + 10;
         const sample = array => array[Math.floor(Math.random() * array.length)];
@@ -36,7 +46,7 @@ const seedDB = async () => {
         }).send();
         const geometry = geoData.body.features[0].geometry;
         const camp = new Campground({
-            author: '61168c48446bd001e024ab68',
+            author: `${sample(authorsIds)}`,
             location: location,
             geometry: geometry,
             title: `${sample(descriptors)} ${sample(places)}`, 
