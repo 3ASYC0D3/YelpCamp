@@ -6,7 +6,7 @@
 <h1>All campgrounds</h1>
 <a href="/campgrounds/new">Add Campground</a>
 <% for (let campground of campgrounds) { %>
-    <div class="card mb-3">
+    <div id="campCard" class="card mb-3">
         <div class="row">
             <div class="col-md-4">
                 <% if(campground.images.length) { %> 
@@ -35,3 +35,8 @@
         const campgrounds = {features: <%-JSON.stringify(campgrounds) %>};
     </script>
     <script src="/clusterMap.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        const cards = document.querySelectorAll('#campCard');
+        ScrollReveal().reveal(cards, { distance: '50px', origin: 'right', interval: 500 });
+    </script>
